@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Fruto.IA - Carteira de Clientes para {{ idea.title }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Carteira de Clientes para {{ idea.title }}</h1>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <button id="addCustomerBtn" class="btn btn-primary me-2">
+            <i class="fas fa-user-plus"></i> Adicionar Cliente
+        </button>
+        <button id="sendBulkEmailBtn" class="btn btn-success" disabled>
+            <i class="fas fa-envelope"></i> Enviar E-mail em Massa
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Lista de Clientes</h5>
+                <div class="table-responsive">
+                    <table id="customersTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllCustomers"></th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Empresa</th>
+                                <th>Categoria</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Os clientes serão inseridos aqui dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para adicionar/editar cliente -->
+<div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalLabel">Adicionar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="customerForm">
+                    <input type="hidden" id="customerId">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="customerName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="customerName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customerEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="customerEmail">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="customerPhone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="customerPhone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customerCompany" class="form-label">Empresa</label>
+                            <input type="text" class="form-control" id="customerCompany">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="customerCategory" class="form-label">Categoria</label>
+                            <input type="text" class="form-control" id="customerCategory">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customerAddress" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="customerAddress">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customerNotes" class="form-label">Notas</label>
+                        <textarea class="form-control" id="customerNotes" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="customerFacebook" class="form-label">Facebook</label>
+                            <input type="url" class="form-control" id="customerFacebook">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customerInstagram" class="form-label">Instagram</label>
+                            <input type="url" class="form-control" id="customerInstagram">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="customerLinkedin" class="form-label">LinkedIn</label>
+                            <input type="url" class="form-control" id="customerLinkedin">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customerTwitter" class="form-label">Twitter</label>
+                            <input type="url" class="form-control" id="customerTwitter">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="saveCustomerBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para enviar mensagem WhatsApp -->
+<div class="modal fade" id="whatsappModal" tabindex="-1" aria-labelledby="whatsappModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="whatsappModalLabel">Enviar Mensagem WhatsApp</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="whatsappForm">
+                    <input type="hidden" id="whatsappCustomerId">
+                    <div class="mb-3">
+                        <label for="whatsappMessage" class="form-label">Mensagem</label>
+                        <textarea class="form-control" id="whatsappMessage" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="sendWhatsappBtn">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para enviar e-mail em massa -->
+<div class="modal fade" id="bulkEmailModal" tabindex="-1" aria-labelledby="bulkEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkEmailModalLabel">Enviar E-mail em Massa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bulkEmailForm">
+                    <div class="mb-3">
+                        <label for="emailSubject" class="form-label">Assunto</label>
+                        <input type="text" class="form-control" id="emailSubject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailContent" class="form-label">Conteúdo</label>
+                        <textarea class="form-control" id="emailContent" rows="5" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-info" id="improveEmailBtn">Melhorar Texto com IA</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="sendBulkEmailConfirmBtn">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir este cliente?
+                <input type="hidden" id="deleteCustomerId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/customers.js') }}"></script>
+{% endblock %}

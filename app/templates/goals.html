@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css">
+<style>
+    .goal-progress {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 15px;
+        border-radius: 5px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+    }
+
+    .goal-progress:hover {
+        opacity: 1;
+    }
+
+    .goal-progress::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #ffc107;
+        cursor: pointer;
+    }
+
+    .goal-progress::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #ffc107;
+        cursor: pointer;
+        border: none;
+    }
+
+    .goal-progress::-ms-thumb {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #ffc107;
+        cursor: pointer;
+    }
+
+    .goal-progress::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 15px;
+        cursor: pointer;
+        background: #d3d3d3;
+        border-radius: 5px;
+    }
+
+    .goal-progress::-moz-range-track {
+        width: 100%;
+        height: 15px;
+        cursor: pointer;
+        background: #d3d3d3;
+        border-radius: 5px;
+    }
+
+    .goal-progress::-ms-track {
+        width: 100%;
+        height: 15px;
+        cursor: pointer;
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+    }
+
+    .progress-bar {
+        background-color: #ffc107 !important;
+    }
+
+    .category-header {
+        cursor: pointer;
+    }
+
+    .category-header:hover {
+        background-color: #495057;
+    }
+
+    .category-icon {
+        transition: transform 0.3s;
+        margin-right: 10px;
+    }
+
+    .category-icon.collapsed {
+        transform: rotate(-90deg);
+    }
+
+    .card-header.bg-black {
+        background-color: #000000 !important;
+    }
+
+    .noUi-connect {
+        background: #ffc107;
+    }
+
+    .noUi-horizontal {
+        height: 18px;
+    }
+
+    .noUi-handle {
+        height: 28px;
+        width: 28px;
+        top: -5px;
+        right: -14px;
+        border-radius: 50%;
+    }
+
+    .noUi-handle:before,
+    .noUi-handle:after {
+        display: none;
+    }
+
+    .goal-progress-container {
+        padding: 10px 20px;
+    }
+
+    .goal-progress-value {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    #overallProgressContainer {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+    .category-progress {
+        text-align: center;
+        width: 150px;
+    }
+    .progress-bar-container {
+        width: 100%;
+        height: 20px;
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    .progress-bar {
+        height: 100%;
+        background-color: #007bff;
+        transition: width 0.5s ease-in-out;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Fruto.IA - Metas para {{ idea.title }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Metas para {{ idea.title }}</h1>
+
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-start align-items-center">
+        <button id="addGoalBtn" class="btn btn-primary me-2">
+            <i class="fas fa-plus"></i> Adicionar Meta
+        </button>
+        <button id="generateGoalsBtn" class="btn btn-warning me-2" style="min-width: 200px;">
+            <i class="fas fa-robot"></i> Gerar Metas com IA
+        </button>
+        <button id="toggleFilterBtn" class="btn btn-info">
+            <i class="fas fa-filter"></i> Filtrar Metas
+        </button>
+    </div>
+</div>
+
+<div id="filterSection" class="row mb-4" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filtrar Metas</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <input type="text" id="titleFilter" class="form-control" placeholder="Título">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <select id="categoryFilter" class="form-select">
+                            <option value="">Todas as Categorias</option>
+                            <option value="especifica">Específica</option>
+                            <option value="mensuravel">Mensurável</option>
+                            <option value="alcancavel">Alcançável</option>
+                            <option value="relevante">Relevante</option>
+                            <option value="temporal">Temporal</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <select id="statusFilter" class="form-select">
+                            <option value="">Todos os Status</option>
+                            <option value="Em andamento">Em andamento</option>
+                            <option value="Concluída">Concluída</option>
+                            <option value="Atrasada">Atrasada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button id="applyFilterBtn" class="btn btn-primary w-100">Aplicar Filtro</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12 mx-auto">
+        <div class="card">
+            <div class="card-header bg-black text-white">
+                <h5 class="mb-0">Progresso Geral das Metas</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="overallProgressChart" style="height: 300px;"></canvas>
+                <div id="overallProgressContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for category in ['especifica', 'mensuravel', 'alcancavel', 'relevante', 'temporal'] %}
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center category-header" data-bs-toggle="collapse" data-bs-target="#{{ category }}List" aria-expanded="true" aria-controls="{{ category }}List">
+                <h5 class="mb-0">
+                    {% if category == 'especifica' %}
+                        <i class="fas fa-bullseye category-icon"></i>
+                    {% elif category == 'mensuravel' %}
+                        <i class="fas fa-chart-line category-icon"></i>
+                    {% elif category == 'alcancavel' %}
+                        <i class="fas fa-flag-checkered category-icon"></i>
+                    {% elif category == 'relevante' %}
+                        <i class="fas fa-star category-icon"></i>
+                    {% elif category == 'temporal' %}
+                        <i class="fas fa-clock category-icon"></i>
+                    {% endif %}
+                    {{ category|capitalize }}
+                </h5>
+                <div>
+                    <span class="category-progress" id="{{ category }}Progress">0%</span>
+                    <i class="fas fa-chevron-down ms-2 collapse-icon"></i>
+                </div>
+            </div>
+            <div class="collapse show" id="{{ category }}List">
+                <div class="card-body">
+                    <div class="goals-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal para adicionar/editar meta -->
+<div class="modal fade" id="goalModal" tabindex="-1" aria-labelledby="goalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="goalModalLabel">Adicionar/Editar Meta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="goalForm">
+                    <input type="hidden" id="goalId">
+                    <div class="mb-3">
+                        <label for="goalTitle" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="goalTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="goalDescription" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalDeadline" class="form-label">Prazo</label>
+                        <input type="date" class="form-control" id="goalDeadline">
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalStatus" class="form-label">Status</label>
+                        <select class="form-select" id="goalStatus">
+                            <option value="Em andamento">Em andamento</option>
+                            <option value="Concluída">Concluída</option>
+                            <option value="Atrasada">Atrasada</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalCategory" class="form-label">Categoria</label>
+                        <select class="form-select" id="goalCategory" required>
+                            <option value="especifica">Específica</option>
+                            <option value="mensuravel">Mensurável</option>
+                            <option value="alcancavel">Alcançável</option>
+                            <option value="relevante">Relevante</option>
+                            <option value="temporal">Temporal</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalProgress" class="form-label">Progresso</label>
+                        <input type="range" class="form-range" id="goalProgress" min="0" max="100" step="1">
+                        <span id="goalProgressValue">0%</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="saveGoalBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+<script src="{{ url_for('static', filename='js/goals.js') }}"></script>
+{% endblock %}

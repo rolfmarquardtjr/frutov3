@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Fruto.IA - Consultor Jurídico para {{ idea.title }}{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+        position: relative;
+        background-color: #e9ecef;
+        border-radius: 50%;
+    }
+    .progress-circle-fill {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        clip: rect(0px, 50px, 100px, 0px);
+        background-color: #b8860b;
+        transform: rotate(0deg);
+        transition: transform 0.5s;
+        position: absolute;
+    }
+    .progress-circle-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .btn-primary, .btn-info {
+        background-color: #b8860b !important;
+        border-color: #b8860b !important;
+        color: white !important;
+    }
+    .btn-primary:hover, .btn-info:hover {
+        background-color: #9b7300 !important;
+        border-color: #9b7300 !important;
+    }
+    .btn-yellow {
+        background-color: #ffc107 !important;
+        border-color: #ffc107 !important;
+        color: #000 !important;
+    }
+    .btn-yellow:hover {
+        background-color: #e0a800 !important;
+        border-color: #e0a800 !important;
+    }
+    .btn-detail {
+        background-color: #000 !important;
+        border-color: #000 !important;
+        color: white !important;
+    }
+    .btn-detail:hover {
+        background-color: #333 !important;
+        border-color: #333 !important;
+    }
+    .update-progress {
+        background-color: #b8860b !important;
+        border-color: #b8860b !important;
+        color: white !important;
+    }
+    .update-progress:hover {
+        background-color: #9b7300 !important;
+        border-color: #9b7300 !important;
+    }
+    #consultationChat {
+        background-color: white;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+    .chat-message {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+    }
+    .user-message {
+        background-color: #f0f0f0;
+        text-align: right;
+    }
+    .assistant-message {
+        background-color: #e6f3ff;
+    }
+    .chat-tip {
+        font-style: italic;
+        color: #6c757d;
+        margin-top: 10px;
+    }
+    .btn-check-in {
+        background-color: #ffc107 !important;
+        border-color: #ffc107 !important;
+        color: #000 !important;
+    }
+    .btn-check-in:hover {
+        background-color: #e0a800 !important;
+        border-color: #d39e00 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Consultor Jurídico para {{ idea.title }}</h1>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <button id="generateLegalStepsBtn" class="btn btn-primary">
+            <i class="fas fa-gavel"></i> Gerar Etapas Legais
+        </button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2>Etapas Legais</h2>
+        <div id="legalStepsList">
+            {% for step in legal_steps %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Etapa {{ step.order }}</h5>
+                    <p class="card-text">{{ step.description }}</p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="progress-circle me-3" data-step-id="{{ step.id }}">
+                            <div class="progress-circle-fill"></div>
+                            <div class="progress-circle-value">{{ step.progress }}%</div>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-check-in check-in-step" data-step-id="{{ step.id }}">
+                                Check-in
+                            </button>
+                            <button class="btn btn-sm btn-detail detail-step" data-step-id="{{ step.id }}">
+                                Detalhar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-details mt-3" id="stepDetails{{ step.id }}" style="display: none;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h2>Consulta Jurídica</h2>
+        <div id="consultationChat" class="border p-3 mb-3" style="height: 400px; overflow-y: auto;">
+            {% for consultation in consultations %}
+            <div class="chat-message {% if consultation.is_user %}user-message{% else %}assistant-message{% endif %}">
+                <strong>{% if consultation.is_user %}Você{% else %}Consultor{% endif %}:</strong>
+                <p>{{ consultation.message }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <form id="consultationForm">
+            <div class="input-group">
+                <input type="text" id="consultationInput" class="form-control" placeholder="Digite sua pergunta...">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </form>
+        <small class="text-muted">Mensagens restantes: <span id="remainingMessages">{{ 10 - consultations|selectattr('is_user', 'equalto', true)|list|length }}</span></small>
+        <p class="chat-tip">Dica: Seja específico nas suas perguntas e não hesite em pedir esclarecimentos. O consultor está aqui para ajudar!</p>
+    </div>
+</div>
+
+<!-- Modal para atualizar progresso -->
+<div class="modal fade" id="checkInModal" tabindex="-1" aria-labelledby="checkInModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checkInModalLabel">Atualizar Progresso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Atualize o progresso da etapa:</p>
+                <input type="range" class="form-range" min="0" max="100" step="10" id="progressSlider">
+                <p>Progresso atual: <span id="currentProgress">0</span>%</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveProgress">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para sucesso na geração de etapas legais -->
+<div class="modal fade" id="legalStepsSuccessModal" tabindex="-1" aria-labelledby="legalStepsSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="legalStepsSuccessModalLabel">Sucesso!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="legalStepsSuccessMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/legal.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .btn-primary:visited,
+    .btn-primary:active,
+    .btn-primary:focus {
+        color: #fff !important;
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
+    .btn-primary:hover {
+        color: #fff !important;
+        background-color: #0056b3 !important;
+        border-color: #004085 !important;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Fruto.IA - Posts Relevantes para {{ idea.title }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Posts Relevantes para {{ idea.title }}</h1>
+
+<div class="row mb-4">
+    <div class="col-12 d-flex">
+        <button id="searchNetworking" class="btn btn-warning" style="margin-right: 20px;">
+            <i class="fas fa-robot"></i> Buscar Posts com IA
+        </button>
+        <button id="toggleManualSearch" class="btn btn-dark">Busca Manual</button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <form id="manualSearchForm" style="display: none; margin-top: 10px;">
+            <div class="input-group">
+                <input type="text" id="manualKeywords" class="form-control" placeholder="Digite palavras-chave separadas por vírgula">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-secondary">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="searchResults" class="row mb-4" style="display: none;">
+    <div class="col-12">
+        <h2>Resultados da Busca</h2>
+        <div id="searchResultsList"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h2>Posts Salvos</h2>
+        <div id="savedPostsList"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchButton = document.getElementById('searchNetworking');
+    const toggleManualSearchButton = document.getElementById('toggleManualSearch');
+    const manualSearchForm = document.getElementById('manualSearchForm');
+    const searchResults = document.getElementById('searchResults');
+    const searchResultsList = document.getElementById('searchResultsList');
+    const savedPostsList = document.getElementById('savedPostsList');
+
+    function getCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
+    function performSearch(endpoint, data = {}) {
+        searchButton.disabled = true;
+        searchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+        searchResultsList.innerHTML = '<p>Buscando posts...</p>';
+        searchResults.style.display = 'block';
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Resposta completa do servidor:', result);
+            searchResultsList.innerHTML = '';
+            if (result.success) {
+                if (result.data.length === 0) {
+                    searchResultsList.innerHTML = `<p>Nenhum post encontrado.</p>`;
+                } else {
+                    result.data.forEach(post => {
+                        const postElement = document.createElement('div');
+                        postElement.className = 'card mb-3';
+                        postElement.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">${post.author?.fullName || 'Autor desconhecido'}</h5>
+                                <p class="card-text">${post.text || 'Conteúdo não disponível'}</p>
+                                <p class="card-text"><small class="text-muted">Likes: ${post.socialActivityCountsInsight?.likeCount || 0}, Comentários: ${post.socialActivityCountsInsight?.numComments || 0}</small></p>
+                                <a href="${post.url || '#'}" target="_blank" class="btn btn-sm btn-primary">Ver Post</a>
+                                <button class="btn btn-sm btn-success save-post" data-post='${JSON.stringify(post)}'>Salvar Post</button>
+                            </div>
+                        `;
+                        searchResultsList.appendChild(postElement);
+                    });
+                }
+            } else {
+                searchResultsList.innerHTML = `<p>Erro: ${result.error || 'Ocorreu um erro desconhecido'}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            searchResultsList.innerHTML = '<p>Ocorreu um erro ao buscar posts. Por favor, tente novamente.</p>';
+        })
+        .finally(() => {
+            searchButton.disabled = false;
+            searchButton.innerHTML = '<i class="fas fa-robot"></i> Buscar Posts com IA';
+        });
+    }
+
+    searchButton.addEventListener('click', function() {
+        performSearch('/api/networking/{{ idea.id }}/search');
+    });
+
+    toggleManualSearchButton.addEventListener('click', function() {
+        manualSearchForm.style.display = manualSearchForm.style.display === 'none' ? 'block' : 'none';
+    });
+
+    manualSearchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const keywords = document.getElementById('manualKeywords').value;
+        performSearch('/api/networking/{{ idea.id }}/manual_search', { keywords: keywords });
+    });
+
+    function savePost(postData) {
+        fetch('/api/networking/{{ idea.id }}/save_post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Post salvo com sucesso!');
+                loadSavedPosts();
+            } else {
+                alert('Erro ao salvar o post: ' + result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocorreu um erro ao salvar o post. Por favor, tente novamente.');
+        });
+    }
+
+    function deletePost(postId) {
+        if (confirm('Tem certeza que deseja excluir este post?')) {
+            fetch(`/api/networking/{{ idea.id }}/delete_post/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    loadSavedPosts();
+                } else {
+                    alert('Erro ao excluir o post: ' + result.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocorreu um erro ao excluir o post. Por favor, tente novamente.');
+            });
+        }
+    }
+
+    function loadSavedPosts() {
+        fetch('/api/networking/{{ idea.id }}/saved_posts', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                displaySavedPosts(result.data);
+            } else {
+                console.error('Erro ao carregar posts salvos:', result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar posts salvos:', error);
+        });
+    }
+
+    function displaySavedPosts(posts) {
+        savedPostsList.innerHTML = '';
+        posts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.className = 'card mb-3';
+            postElement.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${post.author_name}</h5>
+                    <p class="card-text">${post.content}</p>
+                    <p class="card-text"><small class="text-muted">Likes: ${post.likes_count}, Comentários: ${post.comments_count}</small></p>
+                    <a href="${post.linkedin_url}" target="_blank" class="btn btn-sm btn-primary">Ver Post no LinkedIn</a>
+                    <button class="btn btn-sm btn-danger delete-post" data-post-id="${post.id}">Excluir Post</button>
+                </div>
+            `;
+            savedPostsList.appendChild(postElement);
+        });
+
+        document.querySelectorAll('.delete-post').forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                deletePost(postId);
+            });
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('save-post')) {
+            const postData = JSON.parse(e.target.getAttribute('data-post'));
+            savePost(postData);
+        }
+    });
+
+    loadSavedPosts();
+});
+</script>
+{% endblock %}

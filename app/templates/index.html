@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Fruto.IA - Transforme sua ideia em negócio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="display-4 mb-4">Bem-vindo ao Fruto.IA</h1>
+        <p class="lead mb-5">Transforme sua ideia em um negócio de sucesso com a ajuda da Inteligência Artificial.</p>
+        
+        <div class="card shadow-lg mb-5">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Descreva sua ideia de negócio</h5>
+                <form id="ideaForm">
+                    <div class="mb-3">
+                        <textarea class="form-control" id="ideaDescription" rows="5" placeholder="Digite aqui sua ideia de negócio..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">Enviar Ideia</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="questionsSection" class="card shadow-lg d-none">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Perguntas para aprofundar sua ideia</h5>
+                <div id="questionsList" class="text-start"></div>
+                <button id="submitAnswer" class="btn btn-success btn-lg mt-4 d-none">Próxima Pergunta</button>
+            </div>
+        </div>
+
+        <div id="kanbanBoard" class="mt-5 d-none">
+            <h3>Quadro Kanban</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-light">To Do</div>
+                        <div class="card-body">
+                            <ul id="todoList" class="list-group kanban-list" data-status="to_do"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">In Progress</div>
+                        <div class="card-body">
+                            <ul id="inProgressList" class="list-group kanban-list" data-status="in_progress"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">Closed</div>
+                        <div class="card-body">
+                            <ul id="closedList" class="list-group kanban-list" data-status="closed"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div id="savedIdeasSection" class="card shadow-lg">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Ideias Salvas</h5>
+                <ul id="savedIdeasList" class="list-group">
+                    {% for idea in ideas %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <span class="idea-title">{{ idea.title }}</span>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-warning select-idea" data-idea-id="{{ idea.id }}">Selecionar</button>
+                                <button class="btn btn-sm btn-danger delete-idea" data-idea-id="{{ idea.id }}">Excluir</button>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-idea');
+    const selectButtons = document.querySelectorAll('.select-idea');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const ideaId = this.getAttribute('data-idea-id');
+            if (confirm('Tem certeza que deseja excluir esta ideia? Esta ação não pode ser desfeita.')) {
+                fetch(`/delete_idea/${ideaId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('li').remove();
+                    } else {
+                        alert('Erro ao excluir a ideia. Por favor, tente novamente.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocorreu um erro ao excluir a ideia. Por favor, tente novamente.');
+                });
+            }
+        });
+    });
+
+    selectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const ideaId = this.getAttribute('data-idea-id');
+            window.location.href = `/idea/${ideaId}/kanban`;
+        });
+    });
+});
+</script>
+{% endblock %}

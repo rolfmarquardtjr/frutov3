@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Fruto.IA - Assistente IA para {{ idea.title }}{% endblock %}
+
+{% block content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="idea-id" content="{{ idea.id }}">
+
+<h1 class="mb-4">Assistente IA para {{ idea.title }}</h1>
+
+<div id="chat-container" class="mb-4" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+    {% for message in chat_messages %}
+        <div class="message {% if message.role == 'user' %}user-message{% else %}assistant-message{% endif %}">
+            <strong>{{ message.role|capitalize }}:</strong> {{ message.content }}
+        </div>
+    {% endfor %}
+</div>
+
+<form id="chat-form">
+    <div class="input-group mb-3">
+        <input type="text" id="user-input" class="form-control" placeholder="Digite sua mensagem...">
+        <button class="btn btn-primary" type="submit">Enviar</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+{% endblock %}

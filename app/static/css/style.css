@@ -1,0 +1,596 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #e0e0e0;
+    --secondary-color: #e0e0e0;
+    --background-color: #f4f4f4;
+    --text-color: #000000;
+    --sidebar-color: #000000;
+    --sidebar-hover-color: #e0e0e0;
+    --light-purple: #e0e0e0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+a,
+a:hover,
+a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+#sidebar {
+    width: 280px;
+    background: var(--sidebar-color);
+    color: #fff;
+    transition: all 0.3s;
+    min-height: 100vh;
+}
+
+#sidebar.active {
+    width: 80px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sidebar .sidebar-header img {
+    width: 80%;
+    height: auto;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    background-color: #000000;
+}
+
+#content {
+    width: calc(100% - 280px);
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+#content.active {
+    width: calc(100% - 80px);
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -280px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #content {
+        width: 100%;
+    }
+    #content.active {
+        width: calc(100% - 80px);
+    }
+    #sidebarCollapse span {
+        display: none;
+    }
+}
+
+#sidebar.active .sidebar-header h3 {
+    display: none;
+}
+
+#sidebar.active .sidebar-header strong {
+    display: block;
+    font-size: 1.8em;
+    margin-right: 0;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+    color: #fff;
+    background: var(--sidebar-hover-color);
+}
+
+#sidebar ul li a i {
+    margin-right: 10px;
+}
+
+#sidebar.active ul li a {
+    padding: 15px 10px;
+    text-align: center;
+    font-size: 0.85em;
+}
+
+#sidebar.active ul li a i {
+    margin-right: 0;
+    display: block;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+#sidebar.active ul li a span {
+    display: none;
+}
+
+.navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 40px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-btn {
+    box-shadow: none;
+    outline: none !important;
+    border: none;
+}
+
+.card {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    color: #000000;
+}
+
+.card-header {
+    background-color: var(--light-purple);
+    color: #000000;
+    border-radius: 10px 10px 0 0;
+}
+
+.card-header h3 {
+    color: #000;
+    margin-bottom: 0;
+}
+
+.swot-list .list-group-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.swot-list .list-group-item .swot-item-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.swot-list .list-group-item .swot-item-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.swot-list .list-group-item .btn {
+    margin-left: 5px;
+}
+
+.swot-list .list-group-item .btn-outline-primary::before {
+    content: "Editar";
+}
+
+.swot-list .list-group-item .btn-outline-danger::before {
+    content: "Excluir";
+}
+
+.swot-list .list-group-item .btn i {
+    display: none;
+}
+
+.btn {
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #000000;
+    border-color: #000000;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #333333;
+    border-color: #333333;
+    color: #ffffff;
+}
+
+.btn-success {
+    background-color: #000000;
+    border-color: #000000;
+    color: #ffffff;
+}
+
+.btn-success:hover {
+    background-color: #333333;
+    border-color: #333333;
+    color: #ffffff;
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+#questionsSection {
+    display: none;
+    opacity: 1;
+    transform: none;
+    transition: all 0.5s ease;
+}
+
+#questionsSection.d-block {
+    display: block !important;
+}
+
+.kanban-column {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}
+
+.kanban-column-header {
+    padding: 10px;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 10px;
+}
+
+.kanban-column-header.bg-primary {
+    background-color: #BDBDBD !important;
+    color: #000000 !important;
+}
+
+.kanban-column-header.bg-info {
+    background-color: #9E9E9E !important;
+    color: #000000 !important;
+}
+
+.kanban-column-header.bg-success {
+    background-color: #757575 !important;
+    color: #FFFFFF !important;
+}
+
+.kanban-list {
+    min-height: 100px;
+}
+
+.kanban-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+.kanban-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.kanban-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.kanban-item-title {
+    font-weight: bold;
+}
+
+.kanban-item-due-date {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.kanban-item-tags {
+    margin-top: 5px;
+}
+
+.kanban-item-tag {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #495057;
+    font-size: 0.8em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.kanban-item-criticality {
+    display: inline-block;
+    font-size: 0.8em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-right: 5px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.criticality-low {
+    background-color: #28a745;
+    color: #000000;
+}
+
+.criticality-medium {
+    background-color: #ffc107;
+}
+
+.criticality-high {
+    background-color: #dc3545;
+}
+
+#analysisCard {
+    background-color: #f9f9f9;
+    border-left: 5px solid var(--primary-color);
+}
+
+#loadingSpinner {
+    color: var(--primary-color);
+}
+
+.swot-item-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.swot-item-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.swot-item-actions .btn {
+    flex: 1;
+    margin: 0 5px;
+}
+
+.swot-item-actions .btn:first-child {
+    margin-left: 0;
+}
+
+.swot-item-actions .btn:last-child {
+    margin-right: 0;
+}
+
+.app-header {
+    background-color: var(--primary-color);
+    color: black;
+    padding: 0;
+    width: 100%;
+    height: 81.59px;
+    display: flex;
+    align-items: center;
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.content-frame {
+    padding: 20px;
+    background-color: var(--background-color);
+    border-radius: 8px;
+}
+
+main.container {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.footer {
+    background-color: var(--primary-color);
+    color: black;
+}
+
+#sidebar .sidebar-header strong i::before {
+    content: "\f4d8";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+#savedIdeasList .list-group-item {
+    padding: 0.75rem;
+}
+
+#savedIdeasList .idea-title {
+    word-break: break-word;
+    margin-right: 10px;
+}
+
+#savedIdeasList .btn-group {
+    white-space: nowrap;
+}
+
+#savedIdeasList .btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+#sidebar #ideaSelector {
+    width: 90%;
+    margin: 10px auto;
+    display: block;
+    background-color: #e0e0e0;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+}
+
+#sidebar #ideaSelector option {
+    background-color: #fff;
+    color: #000000;
+}
+
+.btn-blue {
+    background-color: #808080;
+    color: white;
+}
+
+.btn-blue:hover {
+    background-color: #a0a0a0;
+    color: white;
+}
+
+#filterCollapse {
+    width: 100%;
+}
+
+.btn-purple {
+    background-color: #000000;
+    border-color: #000000;
+    color: #ffffff;
+}
+
+.btn-purple:hover {
+    background-color: #333333;
+    border-color: #333333;
+    color: #ffffff;
+}
+
+.card-header.bg-success {
+    background-color: #424242 !important;
+    color: #FFFFFF !important;
+}
+
+.card-header.bg-danger {
+    background-color: #616161 !important;
+    color: #FFFFFF !important;
+}
+
+.card-header.bg-info {
+    background-color: #757575 !important;
+    color: #FFFFFF !important;
+}
+
+.card-header.bg-warning {
+    background-color: #9E9E9E !important;
+    color: #000000 !important;
+}
+
+.swot-list .list-group-item .btn {
+    margin-left: 5px;
+}
+
+.btn-outline-primary {
+    color: #000000;
+    border-color: #000000;
+}
+
+.btn-outline-primary:hover {
+    color: #ffffff;
+    background-color: #000000;
+    border-color: #000000;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.user-message {
+    background-color: #e6f2ff;
+    text-align: right;
+}
+
+.assistant-message {
+    background-color: #f0f0f0;
+}
+
+#researchResults {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+#researchContent {
+    white-space: pre-wrap;
+}
+
+.view-research {
+    margin-top: 0.5rem;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    background-color: #000000;
+}
+
+.sidebar-footer ul {
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-footer li {
+    list-style: none;
+}
+
+.sidebar-footer a {
+    color: #ffffff;
+    padding: 10px 20px;
+    display: block;
+    transition: all 0.3s;
+}
+
+.sidebar-footer a:hover {
+    background-color: #333333;
+}
+
+#sidebar {
+    position: relative;
+    min-height: 100vh;
+    padding-bottom: 100px;
+}
+
+#sidebar .components {
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}

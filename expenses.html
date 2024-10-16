@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Despesas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Gerenciador de Despesas</h1>
+        
+        <form id="addExpenseForm" class="mb-4">
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" name="description" placeholder="Descrição" required>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" name="amount" placeholder="Valor" step="0.01" required>
+                </div>
+                <div class="col">
+                    <input type="date" class="form-control" name="date" required>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">Adicionar Despesa</button>
+                </div>
+            </div>
+        </form>
+
+        <table id="expensesTable" class="table">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- As despesas serão inseridas aqui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/static/js/expenses.js"></script>
+</body>
+</html>

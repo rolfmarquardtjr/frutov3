@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Fruto.IA - Configurações de Perfil{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Configurações de Perfil</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Informações Pessoais</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.username.label(class="form-label") }}
+                            {{ form.username(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.full_name.label(class="form-label") }}
+                            {{ form.full_name(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.bio.label(class="form-label") }}
+                            {{ form.bio(class="form-control", rows="3") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Configurações de E-mail para Envio em Massa</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.email_for_sending.label(class="form-label") }}
+                            {{ form.email_for_sending(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email_password.label(class="form-label") }}
+                            {{ form.email_password(class="form-control", type="password") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.smtp_server.label(class="form-label") }}
+                            {{ form.smtp_server(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.smtp_port.label(class="form-label") }}
+                            {{ form.smtp_port(class="form-control", type="number") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Preferências</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.language.label(class="form-label") }}
+                            {{ form.language(class="form-select") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.timezone.label(class="form-label") }}
+                            {{ form.timezone(class="form-select") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.receive_notifications(class="form-check-input") }}
+                            {{ form.receive_notifications.label(class="form-check-label") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Segurança</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.current_password.label(class="form-label") }}
+                            {{ form.current_password(class="form-control", type="password") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.new_password.label(class="form-label") }}
+                            {{ form.new_password(class="form-control", type="password") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.confirm_new_password.label(class="form-label") }}
+                            {{ form.confirm_new_password(class="form-control", type="password") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-primary btn-lg") }}
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Dicas</h5>
+                </div>
+                <div class="card-body">
+                    <p>Mantenha suas informações atualizadas para aproveitar ao máximo o Fruto.IA.</p>
+                    <p>Configurar corretamente o e-mail para envio em massa é essencial para a funcionalidade de marketing.</p>
+                    <p>Escolha uma senha forte e única para proteger sua conta.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
