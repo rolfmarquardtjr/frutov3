@@ -320,6 +320,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (kanbanBoard) {
         loadTasks();
     }
+
+    // Adicione este trecho para estilizar o novo botão
+    const howToUseBtn = document.querySelector('button[data-bs-target="#howToUseModal"]');
+    if (howToUseBtn) {
+        howToUseBtn.classList.add('btn-outline-info');
+        howToUseBtn.innerHTML = '<i class="fas fa-question-circle"></i> Como funciona';
+    }
 });
 
 function filterTasks() {

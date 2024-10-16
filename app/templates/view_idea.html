@@ -16,6 +16,9 @@
             <button class="btn btn-blue" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
                 <i class="fas fa-filter"></i> Filtrar
             </button>
+            <button class="btn btn-info ms-2 btn-outline-info" type="button" data-bs-toggle="modal" data-bs-target="#howToUseModal" style="color: black;">
+                <i class="fas fa-question-circle"></i> Como funciona
+            </button>
         </div>
     </div>
     <div class="row">
@@ -74,8 +77,11 @@
                 <button id="analyzeSwot" class="btn btn-warning me-2">
                     <i class="fas fa-robot"></i> Analisar SWOT com IA
                 </button>
-                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#analysisHistoryContent" aria-expanded="false" aria-controls="analysisHistoryContent">
+                <button class="btn btn-dark text-white me-2" type="button" data-bs-toggle="collapse" data-bs-target="#analysisHistoryContent" aria-expanded="false" aria-controls="analysisHistoryContent">
                     <i class="fas fa-history"></i> Histórico de Análises
+                </button>
+                <button class="btn btn-info btn-outline-info" type="button" data-bs-toggle="modal" data-bs-target="#howToUseSWOTModal" style="color: black;">
+                    <i class="fas fa-question-circle"></i> Como funciona
                 </button>
             </div>
         </div>
@@ -312,6 +318,86 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 <button type="button" class="btn btn-primary" id="saveSwotItemBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para explicar como usar o Kanban -->
+<div class="modal fade" id="howToUseModal" tabindex="-1" aria-labelledby="howToUseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="howToUseModalLabel">Como usar o Quadro Kanban 🚀</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="mb-3">E aí, galera! Bora aprender a usar esse Kanban maneiro? 😎</h6>
+                
+                <p><strong>1. Adicionar tarefas:</strong> Clique no botão "Adicionar Tarefa" e preencha os detalhes. Fácil, né? 👌</p>
+                
+                <p><strong>2. Mover tarefas:</strong> Arraste e solte as tarefas entre as colunas. É tipo um jogo, só que produtivo! 🎮💼</p>
+                
+                <p><strong>3. Editar tarefas:</strong> Clique no botão "Editar" de uma tarefa para atualizar seus detalhes. Mantenha tudo em dia! 📝</p>
+                
+                <p><strong>4. Excluir tarefas:</strong> Finalizou algo? Massa! Clique em "Excluir" para limpar o quadro. 🗑️</p>
+                
+                <p><strong>5. Filtrar tarefas:</strong> Use o filtro para encontrar tarefas específicas. É tipo um Ctrl+F turbinado! 🔍</p>
+                
+                <h6 class="mt-4">Por que usar o Kanban?</h6>
+                <p>O Kanban é tipo um personal trainer para suas tarefas: 💪</p>
+                <ul>
+                    <li>Visualização clara do fluxo de trabalho 👀</li>
+                    <li>Aumento da produtividade (mais tempo para Netflix, eba!) 📺</li>
+                    <li>Identificação rápida de gargalos (chega de desculpas, hein?) 🚫</li>
+                    <li>Flexibilidade para se adaptar às mudanças (porque a vida é uma caixinha de surpresas) 🎁</li>
+                </ul>
+                
+                <p class="mt-3">Agora é com você! Organize suas tarefas e conquiste seus objetivos! 🏆 #VaiQueÉTua</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi, bora usar! 🚀</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para explicar como usar a Análise SWOT -->
+<div class="modal fade" id="howToUseSWOTModal" tabindex="-1" aria-labelledby="howToUseSWOTModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="howToUseSWOTModalLabel">Como usar a Análise SWOT 🚀</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="mb-3">E aí, galera! Bora entender essa Análise SWOT maneira? 😎</h6>
+                
+                <p><strong>1. Adicionar itens:</strong> Use os campos de texto para adicionar forças, fraquezas, oportunidades e ameaças. Manda ver! 💪</p>
+                
+                <p><strong>2. Editar itens:</strong> Clique no botão de lápis para editar um item. Deu mole? Corrige aí! ✏️</p>
+                
+                <p><strong>3. Excluir itens:</strong> Clique no X para remover um item. Ops, esse não era pra estar aqui! 🗑️</p>
+                
+                <p><strong>4. Mover itens:</strong> Arraste e solte os itens entre as categorias. Tipo Tetris, só que estratégico! 🎮</p>
+                
+                <p><strong>5. Gerar SWOT:</strong> Clique em "Gerar SWOT" para criar uma análise do zero. Magia acontecendo! 🎩✨</p>
+                
+                <p><strong>6. Analisar SWOT:</strong> Use o botão "Analisar SWOT com IA" para obter insights profundos. É tipo ter um consultor de bolso! 🤖💼</p>
+                
+                <h6 class="mt-4">Por que usar a Análise SWOT?</h6>
+                <p>A Análise SWOT é como um raio-X da sua ideia: 📊</p>
+                <ul>
+                    <li>Visão clara dos pontos fortes e fracos 👁️</li>
+                    <li>Identificação de oportunidades de ouro (quem sabe um unicórnio aí?) 🦄</li>
+                    <li>Antecipação de possíveis ameaças (melhor prevenir que remediar, né?) 🛡️</li>
+                    <li>Base sólida para tomada de decisões (chega de "achismos"!) 🧠</li>
+                </ul>
+                
+                <p class="mt-3">Agora é com você! Analise, planeje e conquiste o mundo! 🌍 #SWOTparaDominarOMundo</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi, bora analisar! 🚀</button>
             </div>
         </div>
     </div>
