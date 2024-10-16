@@ -18,7 +18,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Desativar o campo de texto e o botão de envio
             ideaDescription.disabled = true;
-            ideaForm.querySelector('button[type="submit"]').disabled = true;
+            const submitButton = ideaForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.style.backgroundColor = '#808080'; // Cor cinza
+            submitButton.style.borderColor = '#808080'; // Borda cinza
 
             // Adicionar mensagem criativa com loader fora da caixa branca
             const creativeMessage = document.createElement('div');
@@ -67,7 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Ocorreu um erro ao processar sua ideia. Por favor, tente novamente.');
                 // Reativar o campo de texto e o botão em caso de erro
                 ideaDescription.disabled = false;
-                ideaForm.querySelector('button[type="submit"]').disabled = false;
+                const submitButton = ideaForm.querySelector('button[type="submit"]');
+                submitButton.disabled = false;
+                submitButton.style.backgroundColor = '#4CAF50'; // Cor verde
+                submitButton.style.borderColor = '#4CAF50'; // Borda verde
                 // Remover a mensagem criativa em caso de erro
                 creativeMessage.remove();
             });
@@ -106,6 +112,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 answer: answer
             };
             currentQuestionIndex++;
+
+            // Mudar a cor do botão para amarelo quando clicado
+            this.style.setProperty('--bs-btn-bg', '#ffc107');
+            this.style.setProperty('--bs-btn-border-color', '#ffc107');
+            this.style.setProperty('--bs-btn-hover-bg', '#ffca2c');
+            this.style.setProperty('--bs-btn-hover-border-color', '#ffc720');
+            this.style.setProperty('--bs-btn-active-bg', '#ffcd39');
+            this.style.setProperty('--bs-btn-active-border-color', '#ffc720');
+            this.style.setProperty('--bs-btn-disabled-bg', '#ffc107');
+            this.style.setProperty('--bs-btn-disabled-border-color', '#ffc107');
+
             displayNextQuestion();
         });
     }
@@ -121,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Carregando...</span>
                 </div>
-                <p class="mt-2 lead">Estou processando suas respostas e gerando tarefas para o seu projeto. Isso pode levar alguns segundos...</p>
+                <p class="mt-2 lead">Estou analisando suas respostas e criando um projeto incrível para você! 🚀 Isso pode levar alguns segundinhos... ⏳</p>
             </div>
         `;
         questionsSection.parentNode.insertBefore(finalLoader, questionsSection.nextSibling);
@@ -198,7 +215,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (ideaForm) {
                 ideaForm.reset();
                 ideaDescription.disabled = false;
-                ideaForm.querySelector('button[type="submit"]').disabled = false;
+                const submitButton = ideaForm.querySelector('button[type="submit"]');
+                submitButton.disabled = false;
+                submitButton.style.backgroundColor = '#4CAF50'; // Cor verde
+                submitButton.style.borderColor = '#4CAF50'; // Borda verde
             }
             if (questionsSection) questionsSection.classList.add('d-none');
             newIdeaBtn.classList.add('d-none');
