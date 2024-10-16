@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="mt-2 lead">Uau, que ideia inovadora! 🚀 Deixa eu pensar em algumas perguntas pra gente turbinar isso!</p>
                 </div>
             `;
-            ideaForm.parentNode.insertBefore(creativeMessage, ideaForm.nextSibling);
+            ideaForm.closest('.card').insertAdjacentElement('afterend', creativeMessage);
 
             fetch('/save_idea', {
                 method: 'POST',
