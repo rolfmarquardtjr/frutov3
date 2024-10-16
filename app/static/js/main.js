@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${question} (${currentQuestionIndex + 1} de ${currentQuestions.length})
                     </label>
                     <textarea class="form-control" id="question${currentQuestionIndex}" rows="3"></textarea>
+                    <small class="form-text text-muted mt-2">Dica: Compartilhe suas ideias livremente. Se não tiver certeza sobre algum detalhe, não se preocupe - sua criatividade é o mais importante!</small>
                 </div>
             `;
             questionsSection.style.display = 'block';
