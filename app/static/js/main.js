@@ -20,14 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
             ideaDescription.disabled = true;
             ideaForm.querySelector('button[type="submit"]').disabled = true;
 
-            // Adicionar mensagem criativa com loader
+            // Adicionar mensagem criativa com loader fora da caixa branca
             const creativeMessage = document.createElement('div');
             creativeMessage.innerHTML = `
                 <div class="text-center mt-4">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Carregando...</span>
                     </div>
-                    <p class="mt-2 lead">Hmm, que ideia interessante! Deixe-me pensar em algumas perguntas para entendê-la melhor...</p>
+                    <p class="mt-2 lead">Uau, que ideia inovadora! 🚀 Deixa eu pensar em algumas perguntas pra gente turbinar isso!</p>
                 </div>
             `;
             ideaForm.parentNode.insertBefore(creativeMessage, ideaForm.nextSibling);
@@ -214,6 +214,26 @@ document.addEventListener('DOMContentLoaded', function() {
             sidebar.classList.toggle('active');
         });
     }
+
+    // Mantenha apenas este trecho para lidar com os botões de exclusão
+    const deleteButtons = document.querySelectorAll('.delete-idea');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const ideaId = this.getAttribute('data-idea-id');
+            showDeleteConfirmationModal(ideaId, this);
+        });
+    });
+
+    const selectButtons = document.querySelectorAll('.select-idea');
+
+    selectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const ideaId = this.getAttribute('data-idea-id');
+            window.location.href = `/kanban/${ideaId}`;
+        });
+    });
 });
 
 function displayTasks(tasks) {
@@ -298,4 +318,94 @@ $(document).ready(function () {
 
 function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
+function showAlert(message, type) {
+    const existingAlert = document.querySelector('.alert');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.role = 'alert';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    document.querySelector('.container').insertAdjacentElement('afterbegin', alertDiv);
+    
+    // Remover o alerta após 5 segundos
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+function showDeleteConfirmationModal(ideaId, buttonElement) {
+    // Remova qualquer modal existente
+    const existingModal = document.getElementById('deleteConfirmationModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    // Crie o novo modal com estilo Bootstrap
+    const modalHTML = `
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja excluir esta ideia? Esta ação não pode ser desfeita.
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+
+    // Adicione o modal ao corpo do documento
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Configure o evento de clique no botão de confirmação
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        deleteIdea(ideaId, buttonElement);
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
+        modal.hide();
+    });
+
+    // Exiba o modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+    modal.show();
+}
+
+function deleteIdea(ideaId, buttonElement) {
+    fetch(`/delete_idea/${ideaId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const listItem = buttonElement.closest('li');
+            if (listItem) {
+                listItem.remove();
+            }
+            showAlert('Ideia excluída com sucesso!', 'success');
+        } else {
+            throw new Error(data.error || 'Erro ao excluir a ideia');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('Ocorreu um erro ao excluir a ideia. Por favor, tente novamente.', 'danger');
+    });
 }

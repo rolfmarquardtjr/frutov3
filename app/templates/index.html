@@ -85,43 +85,4 @@
 {% block scripts %}
 {{ super() }}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.delete-idea');
-    const selectButtons = document.querySelectorAll('.select-idea');
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const ideaId = this.getAttribute('data-idea-id');
-            if (confirm('Tem certeza que deseja excluir esta ideia? Esta ação não pode ser desfeita.')) {
-                fetch(`/delete_idea/${ideaId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.closest('li').remove();
-                    } else {
-                        alert('Erro ao excluir a ideia. Por favor, tente novamente.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Ocorreu um erro ao excluir a ideia. Por favor, tente novamente.');
-                });
-            }
-        });
-    });
-
-    selectButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const ideaId = this.getAttribute('data-idea-id');
-            window.location.href = `/idea/${ideaId}/kanban`;
-        });
-    });
-});
-</script>
 {% endblock %}

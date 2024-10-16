@@ -137,9 +137,9 @@ def generate_tasks():
     data = request.json
     idea_id = data['idea_id']
     idea = Idea.query.get_or_404(idea_id)
-    questions = Question.query.filter_by(idea_id=idea_id).all()
     
     context = f"Ideia: {idea.description}\n"
+    questions = Question.query.filter_by(idea_id=idea_id).all()
     for q in questions:
         context += f"Pergunta: {q.text}\nResposta: {q.answer}\n"
     
@@ -164,6 +164,7 @@ def generate_tasks():
                 criticality=task.criticality
             )
             db.session.add(new_task)
+            db.session.flush()  # Isso atribui um ID à nova tarefa
             
             # Adicionar tags
             for tag_name in task.tags:
@@ -171,12 +172,17 @@ def generate_tasks():
                 if not tag:
                     tag = Tag(name=tag_name)
                     db.session.add(tag)
-                new_task.tags.append(tag)
+                    db.session.flush()  # Isso atribui um ID à nova tag
+                
+                # Verificar se a relação já existe antes de adicionar
+                if tag not in new_task.tags:
+                    new_task.tags.append(tag)
         
         db.session.commit()
         
         return jsonify({'success': True, 'tasks': [{'id': t.id, 'content': t.content, 'status': t.status, 'criticality': t.criticality, 'tags': [{'id': tag.id, 'name': tag.name} for tag in t.tags]} for t in idea.tasks]})
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f"Error generating tasks: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
@@ -211,7 +217,6 @@ def get_tasks(idea_id):
 @login_required
 def add_task():
     data = request.json
-    current_app.logger.info(f"Received task data: {data}")
     new_task = Task(
         content=data['content'],
         status=data['status'],
@@ -221,6 +226,7 @@ def add_task():
         criticality=data.get('criticality', 0)
     )
     db.session.add(new_task)
+    db.session.flush()
 
     # Add tags
     for tag_name in data.get('tags', []):
@@ -228,7 +234,9 @@ def add_task():
         if not tag:
             tag = Tag(name=tag_name)
             db.session.add(tag)
-        new_task.tags.append(tag)
+            db.session.flush()
+        if tag not in new_task.tags:
+            new_task.tags.append(tag)
 
     db.session.commit()
     return jsonify({
@@ -866,12 +874,16 @@ def inject_user_ideas():
 
 @main.route('/delete_idea/<int:idea_id>', methods=['POST'])
 @login_required
+@csrf.exempt
 def delete_idea(idea_id):
     idea = Idea.query.get_or_404(idea_id)
     if idea.user_id != current_user.id:
-        return jsonify({'success': False, 'error': 'Unauthorized'}), 403
+        return jsonify({'success': False, 'error': 'Não autorizado'}), 403
     
     try:
+        # Excluir mensagens de chat relacionadas
+        ChatMessage.query.filter_by(idea_id=idea.id).delete()
+        
         # Excluir tarefas relacionadas
         Task.query.filter_by(idea_id=idea.id).delete()
         
@@ -885,14 +897,39 @@ def delete_idea(idea_id):
         # Excluir perguntas relacionadas
         Question.query.filter_by(idea_id=idea.id).delete()
         
+        # Excluir despesas relacionadas
+        Expense.query.filter_by(idea_id=idea.id).delete()
+        
+        # Excluir metas relacionadas
+        Goal.query.filter_by(idea_id=idea.id).delete()
+        
+        # Excluir pesquisas de mercado relacionadas
+        MarketResearch.query.filter_by(idea_id=idea.id).delete()
+        
+        # Excluir etapas legais relacionadas
+        LegalStep.query.filter_by(idea_id=idea.id).delete()
+        
+        # Excluir consultas legais relacionadas
+        LegalConsultation.query.filter_by(idea_id=idea.id).delete()
+        
+        # Excluir contatos de networking relacionados
+        NetworkingContact.query.filter_by(idea_id=idea.id).delete()
+        
+        # Excluir posts de networking relacionados
+        NetworkingPost.query.filter_by(idea_id=idea.id).delete()
+        
+        # Excluir clientes relacionados
+        Customer.query.filter_by(idea_id=idea.id).delete()
+        
         # Finalmente, excluir a ideia
         db.session.delete(idea)
         db.session.commit()
         
-        return jsonify({'success': True})
+        return jsonify({'success': True, 'message': 'Ideia excluída com sucesso'})
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'error': str(e)}), 500
+        current_app.logger.error(f"Erro ao excluir ideia: {str(e)}")
+        return jsonify({'success': False, 'error': 'Erro ao excluir a ideia. Por favor, tente novamente.'}), 500
 
 @main.route('/api/expenses/<int:idea_id>', methods=['GET', 'POST'])
 @login_required
