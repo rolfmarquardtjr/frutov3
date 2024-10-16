@@ -255,6 +255,27 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = `/kanban/${ideaId}`;
         });
     });
+
+    // Funcionalidade para o menu móvel
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenuContent = document.getElementById('mobile-menu-content');
+
+    if (mobileMenuToggle && mobileMenuContent) {
+        mobileMenuToggle.addEventListener('click', function() {
+            mobileMenuContent.classList.toggle('d-none');
+        });
+    }
+
+    // Funcionalidade para o seletor de ideias móvel
+    const mobileIdeaSelector = document.getElementById('mobileIdeaSelector');
+    if (mobileIdeaSelector) {
+        mobileIdeaSelector.addEventListener('change', function() {
+            const selectedIdeaId = this.value;
+            if (selectedIdeaId) {
+                window.location.href = `/idea/${selectedIdeaId}/kanban`;
+            }
+        });
+    }
 });
 
 function displayTasks(tasks) {

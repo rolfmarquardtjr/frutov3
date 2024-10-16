@@ -594,3 +594,74 @@ main.container {
     overflow-y: auto;
     max-height: calc(100vh - 200px);
 }
+
+/* Estilos para o menu móvel */
+#mobile-menu {
+    background-color: var(--sidebar-color);
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #000000;
+}
+
+.mobile-logo {
+    height: 40px;
+    width: auto;
+}
+
+#mobile-menu-toggle {
+    color: #fff;
+    font-size: 1.5em;
+}
+
+#mobile-menu-content {
+    padding: 15px;
+}
+
+#mobile-menu-content ul {
+    margin: 0;
+    padding: 0;
+}
+
+#mobile-menu-content li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+#mobile-menu-content a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 5px 0;
+}
+
+#mobile-menu-content a i {
+    margin-right: 10px;
+}
+
+#mobileIdeaSelector {
+    width: 100%;
+    background-color: #e0e0e0;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+}
+
+/* Ajuste para o conteúdo principal em dispositivos móveis */
+@media (max-width: 767.98px) {
+    #content {
+        width: 100%;
+        margin-top: 60px; /* Altura do cabeçalho do menu móvel */
+    }
+}

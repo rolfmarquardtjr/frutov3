@@ -12,7 +12,7 @@
 <body>
     <div class="wrapper">
         {% if current_user.is_authenticated %}
-        <nav id="sidebar">
+        <nav id="sidebar" class="d-none d-md-block">
             <div class="sidebar-header">
                 <img src="{{ url_for('static', filename='logo/1_1.png') }}" alt="Fruto.IA Logo" class="img-fluid">
             </div>
@@ -42,6 +42,38 @@
                 <ul class="list-unstyled">
                     <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
                     <li><a href="{{ url_for('main.profile_settings') }}"><i class="fas fa-cog"></i> <span>Configurações de Perfil</span></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Novo menu móvel -->
+        <nav id="mobile-menu" class="d-md-none">
+            <div class="mobile-menu-header">
+                <img src="{{ url_for('static', filename='logo/1_1.png') }}" alt="Fruto.IA Logo" class="img-fluid mobile-logo">
+                <button id="mobile-menu-toggle" class="btn btn-link">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div id="mobile-menu-content" class="d-none">
+                <select id="mobileIdeaSelector" class="form-select mb-3">
+                    <option value="">Selecione uma ideia</option>
+                    {% for idea in current_user.ideas %}
+                    <option value="{{ idea.id }}" {% if idea.id == selected_idea_id %}selected{% endif %}>{{ idea.title }}</option>
+                    {% endfor %}
+                </select>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('main.index') }}"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="{{ url_for('main.kanban', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-tasks"></i> Kanban</a></li>
+                    <li><a href="{{ url_for('main.swot_analysis', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-swatchbook"></i> Análise SWOT</a></li>
+                    <li><a href="{{ url_for('main.assistant', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-robot"></i> Assistente IA</a></li>
+                    <li><a href="{{ url_for('main.view_expenses', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-receipt"></i> Controle de Gastos</a></li>
+                    <li><a href="{{ url_for('main.goals', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-bullseye"></i> Metas</a></li>
+                    <li><a href="{{ url_for('main.networking', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-network-wired"></i> Rede de Networking</a></li>
+                    <li><a href="{{ url_for('main.market_research', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-search"></i> Pesquisa de Mercado</a></li>
+                    <li><a href="{{ url_for('main.legal', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-gavel"></i> Consultor Jurídico</a></li>
+                    <li><a href="{{ url_for('main.customers', idea_id=selected_idea_id) if selected_idea_id else '#' }}" {% if not selected_idea_id %}class="disabled"{% endif %}><i class="fas fa-address-book"></i> Carteira de Clientes</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="{{ url_for('main.profile_settings') }}"><i class="fas fa-cog"></i> Configurações de Perfil</a></li>
                 </ul>
             </div>
         </nav>
