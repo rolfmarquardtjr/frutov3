@@ -4,7 +4,14 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-12">
+        <!-- Botão de toggle para Ideias Salvas (visível apenas em dispositivos móveis) -->
+        <button id="savedIdeasToggle" class="btn btn-primary d-md-none mb-3" type="button" data-bs-toggle="modal" data-bs-target="#savedIdeasModal">
+            Ideias Salvas
+        </button>
+    </div>
+
+    <div class="col-md-8 col-12">
         <h1 class="display-4 mb-4">Bem-vindo ao Fruto.IA</h1>
         <p class="lead mb-5">Transforme sua ideia em um negócio de sucesso com a ajuda da Inteligência Artificial.</p>
         
@@ -59,8 +66,9 @@
         </div>
     </div>
     
-    <div class="col-md-4">
-        <div id="savedIdeasSection" class="card shadow-lg">
+    <div class="col-md-4 col-12">
+        <!-- Seção de Ideias Salvas original (visível apenas em desktop) -->
+        <div id="savedIdeasSection" class="card shadow-lg d-none d-md-block">
             <div class="card-body">
                 <h5 class="card-title mb-4">Ideias Salvas</h5>
                 <ul id="savedIdeasList" class="list-group">
@@ -72,6 +80,31 @@
                                 <button class="btn btn-sm btn-warning select-idea" data-idea-id="{{ idea.id }}">Selecionar</button>
                                 <button class="btn btn-sm btn-danger delete-idea" data-idea-id="{{ idea.id }}">Excluir</button>
                             </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ideias Salvas (visível apenas em dispositivos móveis) -->
+<div class="modal fade" id="savedIdeasModal" tabindex="-1" aria-labelledby="savedIdeasModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="savedIdeasModalLabel">Ideias Salvas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-flush">
+                    {% for idea in ideas %}
+                    <li class="list-group-item">
+                        <span class="idea-title">{{ idea.title }}</span>
+                        <div class="btn-group mt-2" role="group">
+                            <button class="btn btn-sm btn-warning select-idea" data-idea-id="{{ idea.id }}" data-bs-dismiss="modal">Selecionar</button>
+                            <button class="btn btn-sm btn-danger delete-idea" data-idea-id="{{ idea.id }}">Excluir</button>
                         </div>
                     </li>
                     {% endfor %}
